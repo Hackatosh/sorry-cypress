@@ -9,6 +9,7 @@ import {
 } from './api/instances';
 import { blockKeys, handleCreateRun } from './api/runs';
 import { catchRequestHandlerErrors } from './lib/express';
+import { getImageUploadUrl } from "@sorry-cypress/director/screenshots/azure-blob-storage";
 
 export const app = express();
 
@@ -73,6 +74,11 @@ app.put('/instances/:instanceId/stdout', (req, res) => {
 app.get('/ping', (_, res) => {
   res.send(`${Date.now()}: sorry-cypress-director is live`);
 });
+
+app.get('/generate-upload-urls-blob-storage', async (req, res) => {
+  const { uploadUrl, readUrl } = await getImageUploadUrl(req.query.key as string);
+  res.json({ uploadUrl, readUrl });
+})
 
 app.get(
   '/health-check-db',
